@@ -42,6 +42,9 @@ tmux bind -r "+" resize-pane -U 1
 # {{{ other
 tmux bind r source-file $HOME/.tmux.conf \; display ".tmux.conf is reloaded!"
 
+# Jump to previous prompt of pure
+tmux bind B "copy-mode; send-keys -X search-backward '❯'; send-keys -X search-again"
+
 # make mouse wheel smoother
 if is_tmux_version "> 2.4"; then
   tmux bind -T copy-mode-vi WheelUpPane   send-keys -X scroll-up
