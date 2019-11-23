@@ -40,7 +40,7 @@ tmux bind -r "+" resize-pane -U 1
 # }}}
 
 # {{{ other
-tmux bind r source-file $HOME/.tmux.conf \; display ".tmux.conf is reloaded!"
+tmux bind r "source-file ~/.tmux.conf; display '.tmux.conf is reloaded!'"
 
 # Jump to previous prompt of pure
 tmux bind B "copy-mode; send-keys -X search-backward '❯'; send-keys -X search-again"
