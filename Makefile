@@ -1,7 +1,14 @@
-CONFIGS := $(wildcard .tmux*)
+CONFIG_DIR = ~/.config
+TMUX_CONFIG_DIR = $(CONFIG_DIR)/tmux
+TMUX_CONF_PATH = ~/.tmux.conf
+
+setup:
+	@if [ ! -d $(CONFIG_DIR) ]; then mkdir -v $(CONFIG_DIR); fi
 
 link:
-	@$(foreach config, $(CONFIGS), ln -sfv $(CURDIR)/$(config) $(HOME)/$(config);)
+	@ln -sfv $(CURDIR) $(TMUX_CONFIG_DIR)
+	@ln -sfv $(CURDIR)/tmux.plugins.conf $(TMUX_CONF_PATH)
 
 unlink:
-	@$(foreach config, $(CONFIGS), unlink $(HOME)/$(config);)
+	@unlink $(TMUX_CONFIG_DIR)
+	@unlink $(TMUX_CONF_PATH)
