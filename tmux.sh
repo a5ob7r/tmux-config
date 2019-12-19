@@ -49,12 +49,6 @@ tmux bind k select-pane -U
 tmux bind j select-pane -D
 tmux bind h select-pane -L
 tmux bind l select-pane -R
-
-# resize pane with intuitive key binding
-tmux bind -r "<" resize-pane -L 1
-tmux bind -r ">" resize-pane -R 1
-tmux bind -r "-" resize-pane -D 1
-tmux bind -r "+" resize-pane -U 1
 # }}}
 
 # {{{ other
