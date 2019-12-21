@@ -25,12 +25,6 @@ tmux bind "${TMUX_PREFIX_KEY}" send-prefix
 tmux unbind 'C-b'
 # }}}
 
-# {{{ copy and paste
-tmux bind Space copy-mode
-
-# operation like vim
-tmux bind p paste-buffer
-
 if is_tmux_version "> 2.4"; then
   tmux bind -T copy-mode-vi v send-keys -X begin-selection
   tmux bind -T copy-mode-vi V send-keys -X select-line
