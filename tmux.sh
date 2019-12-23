@@ -102,7 +102,7 @@ if is_tmux_version ">= 2.4"; then
   tmux set -s command-alias[0] e="split-window -c '#{pane_current_path}'"
 fi
 
-case "${OSTYLE}" in
+case "${OSTYPE}" in
   linux* )
     tmux set -s default-terminal "tmux-256color"
     ;;
