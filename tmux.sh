@@ -25,14 +25,38 @@ tmux bind "${TMUX_PREFIX_KEY}" send-prefix
 tmux unbind 'C-b'
 # }}}
 
-if is_tmux_version "> 2.4"; then
+# {{{ Key bindings
+if is_tmux_version ">= 2.4"; then
+  # {{{ copy-selection without cancel
+  tmux unbind -T copy-mode-vi Enter
+  tmux bind -T copy-mode-vi Enter send-keys -X copy-selection
+
+  # Text selection with mouse like general terminals
+  tmux unbind -T copy-mode-vi MouseDragEnd1Pane
+  # tmux bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-selection
+  # }}}
+
+  tmux unbind -T copy-mode-vi v
   tmux bind -T copy-mode-vi v send-keys -X begin-selection
+  tmux unbind -T copy-mode-vi V
   tmux bind -T copy-mode-vi V send-keys -X select-line
+
+  # make mouse wheel smoother
+  tmux unbind -T copy-mode-vi WheelUpPane
+  tmux bind -T copy-mode-vi WheelUpPane send-keys -X scroll-up
+  tmux unbind -T copy-mode-vi WheelDownPane
+  tmux bind -T copy-mode-vi WheelDownPane send-keys -X scroll-down
 fi
-# }}}
+
+if is_tmux_version ">= 3.0"; then
+  tmux bind R "source ~/.config/tmux/tmux.conf; display 'tmux.conf is reloaded!'"
+else
+  tmux bind R "source ~/.tmux.conf; display '.tmux.conf is reloaded!'"
+fi
 
 # {{{ pane control
-# when split window, the directory on new splitted window is same on original window.
+# when split window, the directory on new splitted window is same on original
+# window.
 tmux unbind "%"
 tmux bind "%" split-window -h -c "#{pane_current_path}"
 tmux unbind '"'
@@ -42,65 +66,63 @@ tmux bind '"' split-window -v -c "#{pane_current_path}"
 tmux bind k select-pane -U
 tmux bind j select-pane -D
 tmux bind h select-pane -L
+tmux unbind l
 tmux bind l select-pane -R
+
+# Select pane using continuous Shift + JKHL typing.
+tmux bind J "selectp -D; switchc -T prefix"
+tmux bind K "selectp -U; switchc -T prefix"
+tmux bind H "selectp -L; switchc -T prefix"
+tmux unbind L
+tmux bind L "selectp -R; switchc -T prefix"
 # }}}
 
 # {{{ other
-tmux bind r "source-file ~/.tmux.conf; display '.tmux.conf is reloaded!'"
+tmux unbind q
+tmux bind q display-panes -b -d 0
 
 # Jump to previous prompt of pure
 tmux bind B "copy-mode; send-keys -X search-backward '❯'; send-keys -X search-again"
-
-# make mouse wheel smoother
-if is_tmux_version "> 2.4"; then
-  tmux bind -T copy-mode-vi WheelUpPane   send-keys -X scroll-up
-  tmux bind -T copy-mode-vi WheelDownPane send-keys -X scroll-down
-fi
 # }}}
 
 # {{{ commnad alias
 # exec man by split window
-tmux bind m command-prompt -p "<manual by split-window horiz>" "split-window 'exec man %%'"
-tmux bind M command-prompt -p "<manual by split-window vert>" "split-window -h 'exec man %%'"
+tmux unbind m
+tmux bind m command-prompt -p "<man vert>" "splitw 'man %%'"
+tmux unbind M
+tmux bind M command-prompt -p "<man horiz>" "splitw -h 'man %%'"
 
 # exec tig
 tmux bind g split-window -c "#{pane_current_path}" tig
 # }}}
-
-# {{{ default shell
-tmux set -g default-command "$SHELL"
 # }}}
 
-# {{{ terminal type
+# {{{ Server options
+if is_tmux_version ">= 2.4"; then
+  tmux set -s command-alias[0] e="split-window -c '#{pane_current_path}'"
+fi
+
+tmux set -s default-terminal "tmux-256color"
+tmux set -s escape-time 0
+tmux set -g history-file "$HOME/.tmux_history"
+
 # use true color in tmux
-tmux set -g default-terminal "xterm-256color"
-tmux set -ga terminal-overrides ",xterm-256color:Tc"
+tmux set -sa terminal-overrides ",*256col*:Tc"
 # }}}
 
-# {{{ operating style
+# {{{ Session options
+tmux set -g default-command "${SHELL}"
+tmux set -g display-time 0
+tmux set -g history-limit 10000
 tmux set -g mouse on
-tmux set -wg mode-keys vi
 tmux set -g status-keys emacs
-tmux set -sg escape-time 0
-# }}}
 
-# {{{ status line
 if ! is_ssh_connection; then
   tmux set -g status-position top
 fi
 # }}}
 
-# {{{ history
-tmux set -g history-file "$HOME/.tmux_history"
-tmux set -g history-limit 10000
-# }}}
-
-# {{{ command alias
-if is_tmux_version "> 2.4"; then
-  tmux set -sg command-alias[0] e="split-window -c '#{pane_current_path}'"
-fi
-# }}}
-
-# {{{ others
+### {{{ Window options
 tmux set -wg aggressive-resize on
+tmux set -wg mode-keys vi
 # }}}
