@@ -102,7 +102,14 @@ if is_tmux_version ">= 2.4"; then
   tmux set -s command-alias[0] e="split-window -c '#{pane_current_path}'"
 fi
 
-tmux set -s default-terminal "tmux-256color"
+case "${OSTYLE}" in
+  linux* )
+    tmux set -s default-terminal "tmux-256color"
+    ;;
+  darwin* )
+    tmux set -s default-terminal "xterm-256color"
+    ;;
+esac
 tmux set -s escape-time 0
 tmux set -g history-file "$HOME/.tmux_history"
 
