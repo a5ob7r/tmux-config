@@ -93,7 +93,8 @@ tmux unbind M
 tmux bind M command-prompt -p "<man horiz>" "splitw -h 'man %%'"
 
 # exec tig
-tmux bind g split-window -c "#{pane_current_path}" tig
+tmux bind g splitw -c "#{pane_current_path}" tig
+tmux bind G splitw -h -c "#{pane_current_path}" tig
 # }}}
 # }}}
 
