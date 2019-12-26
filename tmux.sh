@@ -116,6 +116,7 @@ tmux set -g history-file "$HOME/.tmux_history"
 
 # use true color in tmux
 tmux set -sa terminal-overrides ",*256col*:Tc"
+tmux set -sa terminal-overrides ",alacritty*:Tc"
 # }}}
 
 # {{{ Session options
