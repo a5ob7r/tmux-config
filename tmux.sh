@@ -18,6 +18,11 @@ is_ssh_connection() {
   [[ -n "${SSH_CONNECTION}" ]]
 }
 
+readonly TMUX_DATA_HOME_PATH=~/.local/share/tmux
+readonly TMUX_PLUGIN_MANAGER_PATH="${TMUX_DATA_HOME_PATH}/plugins"
+
+tmux setenv -g TMUX_PLUGIN_MANAGER_PATH "${TMUX_PLUGIN_MANAGER_PATH}"
+
 # {{{ prefix key
 readonly TMUX_PREFIX_KEY='C-q'
 tmux set -g prefix "${TMUX_PREFIX_KEY}"
@@ -112,7 +117,7 @@ case "${OSTYPE}" in
     ;;
 esac
 tmux set -s escape-time 0
-tmux set -g history-file "$HOME/.tmux_history"
+tmux set -g history-file "${TMUX_DATA_HOME_PATH}/tmux_history"
 
 # use true color in tmux
 tmux set -sa terminal-overrides ",*256col*:Tc"
@@ -134,4 +139,18 @@ fi
 ### {{{ Window options
 tmux set -wg aggressive-resize on
 tmux set -wg mode-keys vi
+# }}}
+
+
+tmux source -q "${TMUX_DATA_HOME_PATH}/tmux.local.conf"
+
+# {{{ load tpm and plugins
+# install `tpm` and plugins automatically when tmux is started
+if [[ ! -d "${TMUX_PLUGIN_MANAGER_PATH}/tpm" ]]; then
+  git clone 'https://github.com/tmux-plugins/tpm' "${TMUX_PLUGIN_MANAGER_PATH}/tpm" \
+    && "${TMUX_PLUGIN_MANAGER_PATH}/tpm/bin/install_plugins"
+fi
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+tmux run -b "${TMUX_PLUGIN_MANAGER_PATH}/tpm/tpm"
 # }}}
