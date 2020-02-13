@@ -1,0 +1,22 @@
+name: main
+
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install tmux
+        run: apt update && apt install -y --no-install-recommends tmux
+      - name: Deploy configs
+        run: curl -L https://raw.githubusercontent.com/a5ob7r/tmux-config/master/etc/deploy.sh | bash
+      - name: Start tmux
+        run: tmux -c exit
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run shellcheck
+        run: shellcheck $(find . -type f -regextype posix-egrep -regex ".*\.sh")
