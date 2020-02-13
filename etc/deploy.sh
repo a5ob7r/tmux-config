@@ -8,4 +8,5 @@ cd /tmp
 curl -L https://api.github.com/repos/a5ob7r/tmux-config/tarball | tar zx
 install -d ~/.config
 mv a5ob7r-tmux-config-* ~/.config/tmux
+cd ~/.config/tmux
 cat tmux.plugins.conf tmux.conf | grep -Ev 'tmux-plugins/tmux-battery|@TMUX_CZ' >> ~/.tmux.conf
