@@ -55,8 +55,10 @@ fi
 
 if is_tmux_version ">= 3.0"; then
   tmux bind R "source ~/.config/tmux/tmux.conf; display 'tmux.conf is reloaded!'"
-else
+elif is_tmux_version "> 2.1"; then
   tmux bind R "source ~/.tmux.conf; display '.tmux.conf is reloaded!'"
+else
+  tmux bind R source ~/.tmux.conf\; display '.tmux.conf is reloaded!'
 fi
 
 # {{{ pane control
@@ -75,19 +77,23 @@ tmux unbind l
 tmux bind l select-pane -R
 
 # Select pane using continuous Shift + JKHL typing.
-tmux bind J "selectp -D; switchc -T prefix"
-tmux bind K "selectp -U; switchc -T prefix"
-tmux bind H "selectp -L; switchc -T prefix"
-tmux unbind L
-tmux bind L "selectp -R; switchc -T prefix"
+if is_tmux_version "> 2.1"; then
+  tmux bind J "selectp -D; switchc -T prefix"
+  tmux bind K "selectp -U; switchc -T prefix"
+  tmux bind H "selectp -L; switchc -T prefix"
+  tmux unbind L
+  tmux bind L "selectp -R; switchc -T prefix"
+fi
 # }}}
 
 # {{{ other
-tmux unbind q
-tmux bind q display-panes -b -d 0
+if is_tmux_version "> 2.1"; then
+  tmux unbind q
+  tmux bind q display-panes -b -d 0
 
-# Jump to previous prompt of pure
-tmux bind B "copy-mode; send-keys -X search-backward '❯'; send-keys -X search-again"
+  # Jump to previous prompt of pure
+  tmux bind B "copy-mode; send-keys -X search-backward '❯'; send-keys -X search-again"
+fi
 # }}}
 
 # {{{ commnad alias
@@ -126,7 +132,9 @@ tmux set -sa terminal-overrides ",alacritty*:Tc"
 
 # {{{ Session options
 tmux set -g default-command "${SHELL}"
-tmux set -g display-time 0
+if is_tmux_version "> 2.1"; then
+  tmux set -g display-time 0
+fi
 tmux set -g history-limit 10000
 tmux set -g mouse on
 tmux set -g status-keys emacs
@@ -141,8 +149,9 @@ tmux set -wg aggressive-resize on
 tmux set -wg mode-keys vi
 # }}}
 
-
-tmux source -q "${TMUX_DATA_HOME_PATH}/tmux.local.conf"
+if is_tmux_version ">= 3.1"; then
+  tmux source -q "${TMUX_DATA_HOME_PATH}/tmux.local.conf"
+fi
 
 # {{{ load tpm and plugins
 # install `tpm` and plugins automatically when tmux is started
