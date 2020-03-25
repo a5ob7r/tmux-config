@@ -10,7 +10,7 @@ readonly REPO_URL='https://api.github.com/repos/a5ob7r/tmux-config/tarball'
 readonly CONF_DIR=~/.config
 readonly TMUX_CONFIG_DIR="${CONF_DIR}/tmux"
 
-readonly TMP_DIR="$(mktemp -d /tmp/a5ob7r_tmux-config_XXXXXXXX)"
+readonly TMP_DIR="$(mktemp -p '' -d a5ob7r_tmux-config_XXXXXXXX)"
 trap 'rm -vrf ${TMP_DIR}' 0
 trap 'rm -vrf ${TMP_DIR}; exit 1' 1 2 3 15
 echo ":: Make a temporary working directory: ${TMP_DIR}"
@@ -30,6 +30,6 @@ echo ":: Move a repository directory to a tmux config directory"
 mv -vT --backup=t "${REPO_DIR}" "${TMUX_CONFIG_DIR}"
 
 echo ":: Generate ~/.tmux.conf wihch is remote version into your home directory"
-readonly TMPFILE="$(mktemp tmux.conf.XXXXXXXX)"
+readonly TMPFILE="$(mktemp -p '' tmux.conf.XXXXXXXX)"
 grep -Ev 'tmux-plugins/tmux-battery|@TMUX_CZ' "${TMUX_CONFIG_DIR}/tmux.conf" >| "${TMPFILE}"
 mv -v --backup=t "${TMPFILE}" ~/.tmux.conf
