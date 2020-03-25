@@ -23,6 +23,9 @@ readonly TMUX_PLUGIN_MANAGER_PATH="${TMUX_DATA_HOME_PATH}/plugins"
 
 tmux setenv -g TMUX_PLUGIN_MANAGER_PATH "${TMUX_PLUGIN_MANAGER_PATH}"
 
+# Update SSH_AUTH_SOCK for re ssh-forwarding(ssh -A)
+tmux set -g update-environment 'SSH_AUTH_SOCK'
+
 # {{{ prefix key
 readonly TMUX_PREFIX_KEY='C-q'
 tmux set -g prefix "${TMUX_PREFIX_KEY}"
