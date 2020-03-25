@@ -58,8 +58,6 @@ fi
 
 if is_tmux_version ">= 3.0"; then
   tmux bind R "source ~/.config/tmux/tmux.conf; display 'tmux.conf is reloaded!'"
-elif is_tmux_version "> 2.1"; then
-  tmux bind R "source ~/.tmux.conf; display '.tmux.conf is reloaded!'"
 else
   tmux bind R source ~/.tmux.conf\; display '.tmux.conf is reloaded!'
 fi
