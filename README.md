@@ -7,8 +7,10 @@ release version which is installed with package manager.
 
 ```sh
 # Deploy into client
+$ git clone https://github.com/a5ob7r/tmux-config.git
 $ cd path/to/tmux-config
-$ make link
+$ mkdir -p ~/.config
+$ ln -sv "${PWD}" ~/.config/tmux
 
 # Or
 
