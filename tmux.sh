@@ -77,6 +77,11 @@ tmux bind h select-pane -L
 tmux unbind l
 tmux bind l select-pane -R
 
+tmux bind -Troot M-J selectp -D
+tmux bind -Troot M-K selectp -U
+tmux bind -Troot M-H selectp -L
+tmux bind -Troot M-L selectp -R
+
 # Select pane using continuous Shift + JKHL typing.
 if is_tmux_version "> 2.1"; then
   tmux bind J "selectp -D; switchc -T prefix"
