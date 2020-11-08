@@ -120,14 +120,14 @@ if is_tmux_version ">= 2.4"; then
   tmux set -s command-alias[0] e="split-window -c '#{pane_current_path}'"
 fi
 
-case "${OSTYPE}" in
-  linux* )
-    tmux set -s default-terminal "tmux-256color"
-    ;;
-  darwin* )
-    tmux set -s default-terminal "xterm-256color"
-    ;;
-esac
+# Wanna set the value to 'tmux-256color'. But in many situation, it is more
+# useful to set 'screen-256color'. For example, ssh connection with
+# psuedo-terminal(-t option), vim color scheme with true color or vim buffer
+# scrolling without background color erasing.
+#
+# NOTE: Consider per os type if set the value to 'tmux-256color'.
+tmux set -s default-terminal 'screen-256color'
+
 tmux set -s escape-time 0
 tmux set -g history-file "${TMUX_DATA_HOME_PATH}/tmux_history"
 
