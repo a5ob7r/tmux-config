@@ -19,9 +19,6 @@ is_ssh_connection() {
 }
 
 readonly TMUX_DATA_HOME_PATH=~/.local/share/tmux
-readonly TMUX_PLUGIN_MANAGER_PATH="${TMUX_DATA_HOME_PATH}/plugins"
-
-tmux setenv -g TMUX_PLUGIN_MANAGER_PATH "${TMUX_PLUGIN_MANAGER_PATH}"
 
 # Update SSH_AUTH_SOCK for re ssh-forwarding(ssh -A)
 tmux set -g update-environment 'SSH_AUTH_SOCK'
@@ -161,11 +158,15 @@ fi
 
 # {{{ load tpm and plugins
 # install `tpm` and plugins automatically when tmux is started
-if [[ ! -d "${TMUX_PLUGIN_MANAGER_PATH}/tpm" ]]; then
-  git clone 'https://github.com/tmux-plugins/tpm' "${TMUX_PLUGIN_MANAGER_PATH}/tpm" \
-    && "${TMUX_PLUGIN_MANAGER_PATH}/tpm/bin/install_plugins"
+readonly TMUX_PLUGIN_MANAGER_PATH=~/.config/tmux/plugins
+tmux setenv -g TMUX_PLUGIN_MANAGER_PATH "${TMUX_PLUGIN_MANAGER_PATH}"
+
+readonly TPM_DIR="${TMUX_PLUGIN_MANAGER_PATH}/tpm"
+if [[ ! -d "${TPM_DIR}" ]]; then
+  git clone 'https://github.com/tmux-plugins/tpm' "${TPM_DIR}" \
+    && "${TPM_DIR}/bin/install_plugins"
 fi
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-tmux run -b "${TMUX_PLUGIN_MANAGER_PATH}/tpm/tpm"
+tmux run -b "${TPM_DIR}/tpm"
 # }}}
