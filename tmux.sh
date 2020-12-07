@@ -21,6 +21,7 @@ is_ssh_connection() {
 # }}}
 
 readonly TMUX_DATA_HOME_PATH=~/.local/share/tmux
+readonly TMUX_LOCAL_CONFIG="${TMUX_DATA_HOME_PATH}/tmux.local.conf"
 
 # Update SSH_AUTH_SOCK for re ssh-forwarding(ssh -A)
 tmux set -g update-environment 'SSH_AUTH_SOCK'
@@ -160,7 +161,9 @@ tmux set -wg mode-keys vi
 # }}}
 
 if is_tmux_version ">= 3.1"; then
-  tmux source -q "${TMUX_DATA_HOME_PATH}/tmux.local.conf"
+  tmux source -q "${TMUX_LOCAL_CONFIG}"
+else
+  [[ -f "${TMUX_LOCAL_CONFIG}" ]] && tmux source "${TMUX_LOCAL_CONFIG}"
 fi
 
 # {{{ load tpm and plugins
