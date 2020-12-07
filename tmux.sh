@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Functions {{{
 # Set current tmux version on an environment variable to control tmux
 # conficures per tmux version
 is_tmux_version() {
@@ -17,6 +18,7 @@ is_tmux_version() {
 is_ssh_connection() {
   [[ -n "${SSH_CONNECTION}" ]]
 }
+# }}}
 
 readonly TMUX_DATA_HOME_PATH=~/.local/share/tmux
 
@@ -41,23 +43,28 @@ if is_tmux_version ">= 2.4"; then
   # tmux bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-selection
   # }}}
 
+  # Vi like operations {{{
   tmux unbind -T copy-mode-vi v
   tmux bind -T copy-mode-vi v send-keys -X begin-selection
   tmux unbind -T copy-mode-vi V
   tmux bind -T copy-mode-vi V send-keys -X select-line
+  # }}}
 
-  # make mouse wheel smoother
+  # One mouse scroll unit is one line {{{
   tmux unbind -T copy-mode-vi WheelUpPane
   tmux bind -T copy-mode-vi WheelUpPane send-keys -X scroll-up
   tmux unbind -T copy-mode-vi WheelDownPane
   tmux bind -T copy-mode-vi WheelDownPane send-keys -X scroll-down
+  # }}}
 fi
 
+# Reload config {{{
 if is_tmux_version ">= 3.0"; then
   tmux bind R "source ~/.config/tmux/tmux.conf; display 'tmux.conf is reloaded!'"
 else
   tmux bind R source ~/.tmux.conf\; display '.tmux.conf is reloaded!'
 fi
+# }}}
 
 # {{{ pane control
 # when split window, the directory on new splitted window is same on original
@@ -147,7 +154,7 @@ if ! is_ssh_connection; then
 fi
 # }}}
 
-### {{{ Window options
+# {{{ Window options
 tmux set -wg aggressive-resize on
 tmux set -wg mode-keys vi
 # }}}
