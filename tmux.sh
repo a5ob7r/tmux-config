@@ -169,7 +169,6 @@ fi
 # {{{ load tpm and plugins
 # install `tpm` and plugins automatically when tmux is started
 readonly TMUX_PLUGIN_MANAGER_PATH=~/.config/tmux/plugins
-tmux setenv -g TMUX_PLUGIN_MANAGER_PATH "${TMUX_PLUGIN_MANAGER_PATH}"
 
 readonly TPM_DIR="${TMUX_PLUGIN_MANAGER_PATH}/tpm"
 if [[ ! -d "${TPM_DIR}" ]]; then
