@@ -160,11 +160,13 @@ tmux set -wg aggressive-resize on
 tmux set -wg mode-keys vi
 # }}}
 
+# Others {{{
 if is_tmux_version ">= 3.1"; then
   tmux source -q "${TMUX_LOCAL_CONFIG}"
 else
   [[ -f "${TMUX_LOCAL_CONFIG}" ]] && tmux source "${TMUX_LOCAL_CONFIG}"
 fi
+# }}}
 
 # {{{ load tpm and plugins
 # install `tpm` and plugins automatically when tmux is started
