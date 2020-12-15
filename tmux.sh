@@ -123,6 +123,7 @@ tmux bind G splitw -h -c "#{pane_current_path}" tig
 # {{{ Server options
 if is_tmux_version ">= 2.4"; then
   tmux set -s command-alias[0] e="split-window -c '#{pane_current_path}'"
+  tmux set -s command-alias[1] reindex='move-window -r'
 fi
 
 # Wanna set the value to 'tmux-256color'. But in many situation, it is more
