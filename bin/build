@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -Cueo pipefail
+
+readonly TMUX_REPO_PATH="${TMUX_REPO_PATH:-$(ghq list -p | grep -m 1 'tmux/tmux')}"
+
+cd "$TMUX_REPO_PATH"
+
+git fetch -v
+git switch -d origin/master
+
+export CFLAGS='-g -O2 -march=native -Wall'
+export CPPFLAGS="$CFLAGS"
+
+sh autogen.sh
+./configure \
+  --enable-utempter \
+  --enable-utf8proc \
+  ;
+make --quiet --jobs "$(nproc)"
+sudo make --quiet install
