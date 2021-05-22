@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 
 # Functions {{{
+# Return current tmux version. This aim is to remove extra prefixes.
+tmux_version () {
+  local version
+
+  version="$(tmux -V)"
+  version="${version/tmux /}"
+  # Maybe HEAD's version output contains extra `next-` prefix.
+  version="${version/next-/}"
+
+  echo "$version"
+}
+
 # Set current tmux version on an environment variable to control tmux
 # conficures per tmux version
 is_tmux_version() {
@@ -8,10 +20,7 @@ is_tmux_version() {
   # ex. "= 1.9", "> 2.9"
   local -r cond_expr="$1"
 
-  # current tmux version
-  local -r tmux_version="$(tmux -V | sed 's/tmux \(next-\)*//g')"
-
-  [[ "$(bc <<< "$tmux_version $cond_expr")" == 1 ]]
+  [[ "$(bc <<< "$(tmux_version) $cond_expr")" == 1 ]]
 }
 
 is_ssh_connection() {
