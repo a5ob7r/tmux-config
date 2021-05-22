@@ -75,6 +75,18 @@ tmux bind "%" split-window -h -c "#{pane_current_path}"
 tmux unbind '"'
 tmux bind '"' split-window -v -c "#{pane_current_path}"
 
+# Immediately jump to a window.
+tmux bind -n M-0 select-window -t 0
+tmux bind -n M-1 select-window -t 1
+tmux bind -n M-2 select-window -t 2
+tmux bind -n M-3 select-window -t 3
+tmux bind -n M-4 select-window -t 4
+tmux bind -n M-5 select-window -t 5
+tmux bind -n M-6 select-window -t 6
+tmux bind -n M-7 select-window -t 7
+tmux bind -n M-8 select-window -t 8
+tmux bind -n M-9 select-window -t 9
+
 # move pane with operation like vim
 tmux bind k select-pane -U
 tmux bind j select-pane -D
