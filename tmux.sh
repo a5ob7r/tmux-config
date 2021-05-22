@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 # Functions {{{
+has () {
+  type "$1" &>/dev/null
+}
+
 # Return current tmux version. This aim is to remove extra prefixes.
 tmux_version () {
   local version
@@ -215,7 +219,8 @@ readonly TMUX_PLUGIN_MANAGER_PATH=~/.config/tmux/plugins
 
 readonly TPM_DIR="$TMUX_PLUGIN_MANAGER_PATH/tpm"
 if [[ ! -d "$TPM_DIR" ]]; then
-  git clone 'https://github.com/tmux-plugins/tpm' "$TPM_DIR" \
+  has git \
+    && git clone 'https://github.com/tmux-plugins/tpm' "$TPM_DIR" \
     && "$TPM_DIR/bin/install_plugins"
 fi
 
