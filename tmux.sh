@@ -1,8 +1,154 @@
 #!/usr/bin/env bash
+# Use pure bash functions as much as possible.
 
 # Functions {{{
 has () {
   type "$1" &>/dev/null
+}
+
+# Return whether or not the argument format is natural number. Acceptable
+# format is a string which is constructed from 0, 1, 2, .., 9 only. This
+# doesn't accept null string.
+# e.g.
+# - 1
+# - 300
+is_nat () {
+  [[ -n "$1" && "${1/[^0-9]/}" == "$1" ]]
+}
+
+# Return whether or not the argument format is a alphabet character.
+# Acceptable format is which is constructed from single alphabet character.
+# This doesn't accept null string.
+# e.g.
+# - a
+# - Z
+is_alphabet_char () {
+  [[ "${#1}" == 1 && "${1/[a-zA-Z]/}" == '' ]]
+}
+
+#######################################
+# Compare two value and return a string to show comparison result between two
+# values. Acceptable value format is below.
+# - natural number
+#   - 3
+#   - 111
+# - single character
+#   - a
+#   - Z
+# Return `UNDEFINED` if not acceptable format value is passed.
+#
+# Global:
+#   None
+# Arguments:
+#   x: first value for comparison
+#   y: second valud for comparison
+# Return:
+#   String: to show result between `x` and `y`
+#     - EQ: equal
+#     - GT: greater than
+#     - LT: lesser than
+#     - UNDEFINED: undefined
+#######################################
+cmp () {
+  local -r x="$1"
+  local -r y="$2"
+
+  # e.g.
+  # x: 3, y: 2
+  (is_nat "$x" && is_nat "$y") \
+    && if (( "$x" == "$y" )); then
+      echo 'EQ'
+    elif (( "$x" > "$y" )); then
+      echo 'GT'
+    elif (( "$x" < "$y" )); then
+      echo 'LT'
+    fi \
+    && return 0
+
+  # e.g.
+  # x: a, y: 2
+  (is_alphabet_char "$x" && is_nat "$y") \
+    && echo 'GT' && return 0
+
+  # e.g.
+  # x: 2, y: a
+  (is_nat "$x" && is_alphabet_char "$y") \
+    && echo 'LT' && return 0
+
+  # e.g.
+  # x: a, y: b
+  (is_alphabet_char "$x" && is_alphabet_char "$y") \
+    && if [[ "$x" == "$y" ]]; then
+      echo 'EQ'
+    elif [[ "$x" > "$y" ]]; then
+      echo 'GT'
+    elif [[ "$x" < "$y" ]]; then
+      echo 'LT'
+    fi && return 0
+
+  echo 'UNDEFINED'
+}
+
+# Return smaller value from two arguments.
+min () {
+  local -r x="$1"
+  local -r y="$2"
+
+  case $(cmp "$x" "$y") in
+    GT )
+      echo "$y"
+      ;;
+    * )
+      echo "$x"
+      ;;
+  esac
+}
+
+# Convert version string to lines. Split version string per dot(.).
+# e.g.
+# 3.2 -> 3
+#        2
+version_to_lines () {
+  local -r version="$(</dev/stdin)"
+  local -r version_suffix_removed="${version%.}"
+
+  while read -r -d '.' ver; do echo "$ver"; done <<<"${version_suffix_removed}."
+}
+
+#######################################
+# Compare two version strings. Version string is like `1.2`, `3.3.3`.
+# Global:
+#   None
+# Arguments:
+#   x: First version string.
+#   y: Second version string.
+# Return:
+#   Same to `cmp`
+#######################################
+cmp_versions() {
+  local -ra versions_x=( $(echo "$1" | version_to_lines) )
+  local -ra versions_y=( $(echo "$2" | version_to_lines) )
+
+  local -r min_len="$(min "${#versions_x[*]}" "${#versions_y[*]}")"
+
+  local compare='UNDEFINED'
+
+  for (( i = 0; i < "$min_len"; i++ )); do
+    local x="${versions_x[$i]}"
+    local y="${versions_y[$i]}"
+
+    compare="$(cmp "$x" "$y")"
+
+    case "$compare" in
+      EQ )
+        ;;
+      * )
+        break
+        ;;
+    esac
+  done
+
+  echo "$compare"
 }
 
 # Return current tmux version. This aim is to remove extra prefixes.
@@ -17,14 +163,21 @@ tmux_version () {
   echo "$version"
 }
 
-# Set current tmux version on an environment variable to control tmux
-# conficures per tmux version
-is_tmux_version() {
-  # conditional expression
-  # ex. "= 1.9", "> 2.9"
-  local -r cond_expr="$1"
+# Compare version string with current tmux version.
+# TODO: Consider some special version format like this: 3.0a, 3.1b.
+cmp_tmux_version () {
+  cmp_versions "$(tmux_version)" "$1"
+}
 
-  [[ "$(bc <<< "$(tmux_version) $cond_expr")" == 1 ]]
+is_current_tmux_version_eq_or_gt () {
+  case "$(cmp_tmux_version "$1")" in
+    EQ | GT )
+      return 0
+      ;;
+    * )
+      return 1
+      ;;
+  esac
 }
 
 is_ssh_connection() {
@@ -46,7 +199,7 @@ tmux unbind 'C-b'
 # }}}
 
 # {{{ Key bindings
-if is_tmux_version '>= 2.4'; then
+if is_current_tmux_version_eq_or_gt '2.4'; then
   # {{{ copy-selection without cancel
   tmux unbind -T copy-mode-vi Enter
   tmux bind -T copy-mode-vi Enter send-keys -X copy-selection
@@ -72,7 +225,7 @@ if is_tmux_version '>= 2.4'; then
 fi
 
 # Reload config {{{
-if is_tmux_version '>= 3.0'; then
+if is_current_tmux_version_eq_or_gt '3.0'; then
   tmux bind R "source ~/.config/tmux/tmux.conf; display 'tmux.conf is reloaded!'"
 else
   tmux bind R source ~/.tmux.conf\; display '.tmux.conf is reloaded!'
@@ -112,7 +265,7 @@ tmux bind -Troot M-H selectp -L
 tmux bind -Troot M-L selectp -R
 
 # Select pane using continuous Shift + JKHL typing.
-if is_tmux_version '> 2.1'; then
+if is_current_tmux_version_eq_or_gt '2.2'; then
   tmux bind J 'selectp -D; switchc -T prefix'
   tmux bind K 'selectp -U; switchc -T prefix'
   tmux bind H 'selectp -L; switchc -T prefix'
@@ -122,7 +275,7 @@ fi
 # }}}
 
 # {{{ other
-if is_tmux_version '> 2.1'; then
+if is_current_tmux_version_eq_or_gt '2.2'; then
   tmux unbind q
   tmux bind q display-panes -b -d 0
 
@@ -149,7 +302,7 @@ tmux bind G splitw -h -c '#{pane_current_path}' tig
 # }}}
 
 # {{{ Server options
-if is_tmux_version '>= 2.4'; then
+if is_current_tmux_version_eq_or_gt '2.4'; then
   tmux set -s command-alias[0] e="split-window -c '#{pane_current_path}'"
   tmux set -s command-alias[1] reindex='move-window -r'
 fi
@@ -167,7 +320,7 @@ tmux set -g history-file "$TMUX_DATA_HOME_PATH/tmux_history"
 
 # Enable extra terminal features.
 # - RGB/Tc: Direct(true or RGB) color.
-if is_tmux_version '>= 3.2'; then
+if is_current_tmux_version_eq_or_gt '3.2'; then
   # It is added on c91b4b2e142b5b3fc9ca88afec6bfa9b2711e01b.
 
   # Matchs to st-256color, xterm-256colour, screen-256color and so on.
@@ -188,7 +341,7 @@ fi
 # login shell. It is need to load the configs only when root login shell. The
 # main configs are `export ENV=VAR` and starting daemons.
 tmux set -g default-command "$SHELL"
-if is_tmux_version '> 2.1'; then
+if is_current_tmux_version_eq_or_gt '2.2'; then
   tmux set -g display-time 0
 fi
 tmux set -g history-limit 10000
@@ -206,7 +359,7 @@ tmux set -wg mode-keys vi
 # }}}
 
 # Others {{{
-if is_tmux_version '>= 3.1'; then
+if is_current_tmux_version_eq_or_gt '3.1'; then
   tmux source -q "$TMUX_LOCAL_CONFIG"
 else
   [[ -f "$TMUX_LOCAL_CONFIG" ]] && tmux source "$TMUX_LOCAL_CONFIG"
