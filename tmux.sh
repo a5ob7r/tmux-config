@@ -152,9 +152,21 @@ tmux set -s default-terminal 'screen-256color'
 tmux set -s escape-time 0
 tmux set -g history-file "$TMUX_DATA_HOME_PATH/tmux_history"
 
-# use true color in tmux
-tmux set -sa terminal-overrides ',*256col*:Tc'
-tmux set -sa terminal-overrides ',alacritty*:Tc'
+# Enable extra terminal features.
+# - RGB/Tc: Direct(true or RGB) color.
+if is_tmux_version '>= 3.2'; then
+  # It is added on c91b4b2e142b5b3fc9ca88afec6bfa9b2711e01b.
+
+  # Matchs to st-256color, xterm-256colour, screen-256color and so on.
+  tmux set -sa terminal-features '*256col*:RGB'
+
+  # Matches to alacritty or alacritty-direct.
+  tmux set -sa terminal-features 'alacritty*:RGB'
+else
+  # For backwards compatibility.
+  tmux set -sa terminal-overrides ',*256col*:Tc'
+  tmux set -sa terminal-overrides ',alacritty*:Tc'
+fi
 # }}}
 
 # {{{ Session options
