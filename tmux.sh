@@ -155,6 +155,10 @@ tmux set -sa terminal-overrides ",alacritty*:Tc"
 # }}}
 
 # {{{ Session options
+# Run interactive shell($SHELL -i, implicitly when no argument) instead of
+# login shell($SHELL -l) on new panes. This aim is no load some configs for
+# login shell. It is need to load the configs only when root login shell. The
+# main configs are `export ENV=VAR` and starting daemons.
 tmux set -g default-command "${SHELL}"
 if is_tmux_version "> 2.1"; then
   tmux set -g display-time 0
