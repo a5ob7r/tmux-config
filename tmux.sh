@@ -6,35 +6,34 @@
 is_tmux_version() {
   # conditional expression
   # ex. "= 1.9", "> 2.9"
-  local cond_expr="${1}"
+  local -r cond_expr="$1"
 
   # current tmux version
-  local tmux_version
-  tmux_version="$(tmux -V | sed 's/tmux \(next-\)*//g')"
+  local -r tmux_version="$(tmux -V | sed 's/tmux \(next-\)*//g')"
 
-  [[ "$(bc <<< "${tmux_version} ${cond_expr}")" == 1 ]]
+  [[ "$(bc <<< "$tmux_version $cond_expr")" == 1 ]]
 }
 
 is_ssh_connection() {
-  [[ -n "${SSH_CONNECTION}" ]]
+  [[ -n "$SSH_CONNECTION" ]]
 }
 # }}}
 
 readonly TMUX_DATA_HOME_PATH=~/.local/share/tmux
-readonly TMUX_LOCAL_CONFIG="${TMUX_DATA_HOME_PATH}/tmux.local.conf"
+readonly TMUX_LOCAL_CONFIG="$TMUX_DATA_HOME_PATH/tmux.local.conf"
 
 # Update SSH_AUTH_SOCK for re ssh-forwarding(ssh -A)
 tmux set -g update-environment 'SSH_AUTH_SOCK'
 
 # {{{ prefix key
 readonly TMUX_PREFIX_KEY='C-q'
-tmux set -g prefix "${TMUX_PREFIX_KEY}"
-tmux bind "${TMUX_PREFIX_KEY}" send-prefix
+tmux set -g prefix "$TMUX_PREFIX_KEY"
+tmux bind "$TMUX_PREFIX_KEY" send-prefix
 tmux unbind 'C-b'
 # }}}
 
 # {{{ Key bindings
-if is_tmux_version ">= 2.4"; then
+if is_tmux_version '>= 2.4'; then
   # {{{ copy-selection without cancel
   tmux unbind -T copy-mode-vi Enter
   tmux bind -T copy-mode-vi Enter send-keys -X copy-selection
@@ -60,7 +59,7 @@ if is_tmux_version ">= 2.4"; then
 fi
 
 # Reload config {{{
-if is_tmux_version ">= 3.0"; then
+if is_tmux_version '>= 3.0'; then
   tmux bind R "source ~/.config/tmux/tmux.conf; display 'tmux.conf is reloaded!'"
 else
   tmux bind R source ~/.tmux.conf\; display '.tmux.conf is reloaded!'
@@ -100,17 +99,17 @@ tmux bind -Troot M-H selectp -L
 tmux bind -Troot M-L selectp -R
 
 # Select pane using continuous Shift + JKHL typing.
-if is_tmux_version "> 2.1"; then
-  tmux bind J "selectp -D; switchc -T prefix"
-  tmux bind K "selectp -U; switchc -T prefix"
-  tmux bind H "selectp -L; switchc -T prefix"
+if is_tmux_version '> 2.1'; then
+  tmux bind J 'selectp -D; switchc -T prefix'
+  tmux bind K 'selectp -U; switchc -T prefix'
+  tmux bind H 'selectp -L; switchc -T prefix'
   tmux unbind L
-  tmux bind L "selectp -R; switchc -T prefix"
+  tmux bind L 'selectp -R; switchc -T prefix'
 fi
 # }}}
 
 # {{{ other
-if is_tmux_version "> 2.1"; then
+if is_tmux_version '> 2.1'; then
   tmux unbind q
   tmux bind q display-panes -b -d 0
 
@@ -126,18 +125,18 @@ fi
 # {{{ commnad alias
 # exec man by split window
 tmux unbind m
-tmux bind m command-prompt -p "<man vert>" "splitw 'man %%'"
+tmux bind m command-prompt -p '<man vert>' "splitw 'man %%'"
 tmux unbind M
-tmux bind M command-prompt -p "<man horiz>" "splitw -h 'man %%'"
+tmux bind M command-prompt -p '<man horiz>' "splitw -h 'man %%'"
 
 # exec tig
-tmux bind g splitw -c "#{pane_current_path}" tig
-tmux bind G splitw -h -c "#{pane_current_path}" tig
+tmux bind g splitw -c '#{pane_current_path}' tig
+tmux bind G splitw -h -c '#{pane_current_path}' tig
 # }}}
 # }}}
 
 # {{{ Server options
-if is_tmux_version ">= 2.4"; then
+if is_tmux_version '>= 2.4'; then
   tmux set -s command-alias[0] e="split-window -c '#{pane_current_path}'"
   tmux set -s command-alias[1] reindex='move-window -r'
 fi
@@ -151,11 +150,11 @@ fi
 tmux set -s default-terminal 'screen-256color'
 
 tmux set -s escape-time 0
-tmux set -g history-file "${TMUX_DATA_HOME_PATH}/tmux_history"
+tmux set -g history-file "$TMUX_DATA_HOME_PATH/tmux_history"
 
 # use true color in tmux
-tmux set -sa terminal-overrides ",*256col*:Tc"
-tmux set -sa terminal-overrides ",alacritty*:Tc"
+tmux set -sa terminal-overrides ',*256col*:Tc'
+tmux set -sa terminal-overrides ',alacritty*:Tc'
 # }}}
 
 # {{{ Session options
@@ -163,8 +162,8 @@ tmux set -sa terminal-overrides ",alacritty*:Tc"
 # login shell($SHELL -l) on new panes. This aim is no load some configs for
 # login shell. It is need to load the configs only when root login shell. The
 # main configs are `export ENV=VAR` and starting daemons.
-tmux set -g default-command "${SHELL}"
-if is_tmux_version "> 2.1"; then
+tmux set -g default-command "$SHELL"
+if is_tmux_version '> 2.1'; then
   tmux set -g display-time 0
 fi
 tmux set -g history-limit 10000
@@ -182,10 +181,10 @@ tmux set -wg mode-keys vi
 # }}}
 
 # Others {{{
-if is_tmux_version ">= 3.1"; then
-  tmux source -q "${TMUX_LOCAL_CONFIG}"
+if is_tmux_version '>= 3.1'; then
+  tmux source -q "$TMUX_LOCAL_CONFIG"
 else
-  [[ -f "${TMUX_LOCAL_CONFIG}" ]] && tmux source "${TMUX_LOCAL_CONFIG}"
+  [[ -f "$TMUX_LOCAL_CONFIG" ]] && tmux source "$TMUX_LOCAL_CONFIG"
 fi
 # }}}
 
@@ -193,12 +192,12 @@ fi
 # install `tpm` and plugins automatically when tmux is started
 readonly TMUX_PLUGIN_MANAGER_PATH=~/.config/tmux/plugins
 
-readonly TPM_DIR="${TMUX_PLUGIN_MANAGER_PATH}/tpm"
-if [[ ! -d "${TPM_DIR}" ]]; then
-  git clone 'https://github.com/tmux-plugins/tpm' "${TPM_DIR}" \
-    && "${TPM_DIR}/bin/install_plugins"
+readonly TPM_DIR="$TMUX_PLUGIN_MANAGER_PATH/tpm"
+if [[ ! -d "$TPM_DIR" ]]; then
+  git clone 'https://github.com/tmux-plugins/tpm' "$TPM_DIR" \
+    && "$TPM_DIR/bin/install_plugins"
 fi
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-tmux run -b "${TPM_DIR}/tpm"
+tmux run -b "$TPM_DIR/tpm"
 # }}}
