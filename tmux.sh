@@ -115,7 +115,11 @@ if is_tmux_version "> 2.1"; then
   tmux bind q display-panes -b -d 0
 
   # Jump to previous prompt of pure
-  tmux bind B "copy-mode; send-keys -X search-backward '❯'; send-keys -X search-again"
+  tmux bind B "\
+    copy-mode; \
+    send-keys -X search-backward '${PURE_PROMPT_SYMBOL:-❯}'; \
+    send-keys -X search-again \
+    "
 fi
 # }}}
 
