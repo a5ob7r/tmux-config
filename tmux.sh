@@ -255,16 +255,20 @@ readonly TMUX_LOCAL_CONFIG="$TMUX_DATA_HOME_PATH/tmux.local.conf"
 # Update SSH_AUTH_SOCK for re ssh-forwarding(ssh -A)
 tmux set -g update-environment 'SSH_AUTH_SOCK'
 
-# {{{ prefix key
+# Prefix key {{{
 readonly TMUX_PREFIX_KEY='C-q'
 tmux set -g prefix "$TMUX_PREFIX_KEY"
+
+# Send prefix key to tmux inside tmux by double typing prefix key.
 tmux bind "$TMUX_PREFIX_KEY" send-prefix
+
+# Unbind default prefix key.
 tmux unbind 'C-b'
 # }}}
 
-# {{{ Key bindings
+# Key bindings {{{
 if is_current_tmux_version_eq_or_gt '2.4'; then
-  # {{{ copy-selection without cancel
+  # copy-selection without cancel {{{
   tmux unbind -T copy-mode-vi Enter
   tmux bind -T copy-mode-vi Enter send-keys -X copy-selection
 
@@ -365,7 +369,7 @@ tmux bind G splitw -h -c '#{pane_current_path}' tig
 # }}}
 # }}}
 
-# {{{ Server options
+# Server options {{{
 if is_current_tmux_version_eq_or_gt '2.4'; then
   tmux set -sa command-alias e="split-window -c '#{pane_current_path}'"
   tmux set -sa command-alias reindex='move-window -r'
@@ -399,7 +403,7 @@ else
 fi
 # }}}
 
-# {{{ Session options
+# Session options {{{
 # Run interactive shell($SHELL -i, implicitly when no argument) instead of
 # login shell($SHELL -l) on new panes. This aim is no load some configs for
 # login shell. It is need to load the configs only when root login shell. The
@@ -420,7 +424,7 @@ if ! is_ssh_connection; then
 fi
 # }}}
 
-# {{{ Window options
+# Window options {{{
 tmux set -wg aggressive-resize on
 tmux set -wg mode-keys vi
 # }}}
@@ -433,7 +437,7 @@ else
 fi
 # }}}
 
-# {{{ load tpm and plugins
+# Load tpm and plugins {{{
 # install `tpm` and plugins automatically when tmux is started
 readonly TMUX_PLUGIN_MANAGER_PATH=~/.config/tmux/plugins
 
