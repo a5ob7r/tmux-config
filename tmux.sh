@@ -249,11 +249,10 @@ is_ssh_connection() {
 }
 # }}}
 
+# Variables {{{
 readonly TMUX_DATA_HOME_PATH=~/.local/share/tmux
 readonly TMUX_LOCAL_CONFIG="$TMUX_DATA_HOME_PATH/tmux.local.conf"
-
-# Update SSH_AUTH_SOCK for re ssh-forwarding(ssh -A)
-tmux set -g update-environment 'SSH_AUTH_SOCK'
+# }}}
 
 # Prefix key {{{
 readonly TMUX_PREFIX_KEY='C-q'
@@ -410,6 +409,9 @@ tmux set -g status-keys emacs
 if ! is_ssh_connection; then
   tmux set -g status-position top
 fi
+
+# Update SSH_AUTH_SOCK for re ssh-forwarding(ssh -A)
+tmux set -g update-environment 'SSH_AUTH_SOCK'
 # }}}
 
 # Window options {{{
