@@ -46,7 +46,11 @@ is_alphabet_char () {
 join_lines_with () {
   # shellcheck disable=2207
   local -ra lines=( $(</dev/stdin) )
+
+  # First character of `IFS` is used as delimiter to join elements of array.
   local -r IFS="$1"
+
+  # Join elements of array using `IFS`.
   echo "${lines[*]}"
 }
 
