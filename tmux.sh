@@ -269,7 +269,6 @@ tmux unbind 'C-b'
 # Key bindings {{{
 if is_current_tmux_version_eq_or_gt '2.4'; then
   # copy-selection without cancel {{{
-  tmux unbind -T copy-mode-vi Enter
   tmux bind -T copy-mode-vi Enter send-keys -X copy-selection
 
   # Text selection with mouse like general terminals
@@ -278,16 +277,12 @@ if is_current_tmux_version_eq_or_gt '2.4'; then
   # }}}
 
   # Vi like operations {{{
-  tmux unbind -T copy-mode-vi v
   tmux bind -T copy-mode-vi v send-keys -X begin-selection
-  tmux unbind -T copy-mode-vi V
   tmux bind -T copy-mode-vi V send-keys -X select-line
   # }}}
 
   # One mouse scroll unit is one line {{{
-  tmux unbind -T copy-mode-vi WheelUpPane
   tmux bind -T copy-mode-vi WheelUpPane send-keys -X scroll-up
-  tmux unbind -T copy-mode-vi WheelDownPane
   tmux bind -T copy-mode-vi WheelDownPane send-keys -X scroll-down
   # }}}
 fi
@@ -303,9 +298,7 @@ fi
 # {{{ pane control
 # when split window, the directory on new splitted window is same on original
 # window.
-tmux unbind "%"
 tmux bind "%" split-window -h -c "#{pane_current_path}"
-tmux unbind '"'
 tmux bind '"' split-window -v -c "#{pane_current_path}"
 
 # Immediately jump to a window.
@@ -324,7 +317,6 @@ tmux bind -n M-9 select-window -t 9
 tmux bind k select-pane -U
 tmux bind j select-pane -D
 tmux bind h select-pane -L
-tmux unbind l
 tmux bind l select-pane -R
 
 tmux bind -n M-J selectp -D
@@ -337,14 +329,12 @@ if is_current_tmux_version_eq_or_gt '2.2'; then
   tmux bind J 'selectp -D; switchc -T prefix'
   tmux bind K 'selectp -U; switchc -T prefix'
   tmux bind H 'selectp -L; switchc -T prefix'
-  tmux unbind L
   tmux bind L 'selectp -R; switchc -T prefix'
 fi
 # }}}
 
 # {{{ other
 if is_current_tmux_version_eq_or_gt '2.2'; then
-  tmux unbind q
   tmux bind q display-panes -b -d 0
 
   # Jump to previous prompt of pure
@@ -358,9 +348,7 @@ fi
 
 # {{{ commnad alias
 # exec man by split window
-tmux unbind m
 tmux bind m command-prompt -p '<man vert>' "splitw 'man %%'"
-tmux unbind M
 tmux bind M command-prompt -p '<man horiz>' "splitw -h 'man %%'"
 
 # exec tig
