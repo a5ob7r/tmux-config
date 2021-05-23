@@ -27,6 +27,26 @@ is_alphabet_char () {
 }
 
 #######################################
+# Join lines with a delimiter.
+# e.g.
+# 3
+# a
+# 12
+# bb -> 3.a.12.bb
+# Global:
+#   None
+# Arguments:
+#   Delim: A Deliimiter character to join lines.
+# Return:
+#   Joined string
+#######################################
+join_lines_with () {
+  local -ra lines=( $(</dev/stdin) )
+  local -r IFS="$1"
+  echo "${lines[*]}"
+}
+
+#######################################
 # Compare two value and return a string to show comparison result between two
 # values. Acceptable value format is below.
 # - natural number
@@ -163,10 +183,44 @@ tmux_version () {
   echo "$version"
 }
 
+# 1a -> 1
+#       a
+# 1 -> 1
+split_tmux_version () {
+  local -r version="$1"
+
+  # e.g.
+  # 3a -> x, y
+  local -r x="${version/[a-z]*/}"
+  local -r y="${version/*[0-9]/}"
+
+  # Only output integer version if no alphabet part.
+  if [[ "$version" == "$x" ]]; then
+    echo "$x"
+    return 0
+  fi
+
+  echo "$x"
+  echo "$y"
+}
+
+# 3.3a -> 3
+#         3
+#         a
+lines_tmux_version () {
+  tmux_version | version_to_lines | while read -r ver; do
+    split_tmux_version "$ver"
+  done
+}
+
+# 3.3a -> 3.3.a
+normalized_tmux_version () {
+  lines_tmux_version | join_lines_with '.'
+}
+
 # Compare version string with current tmux version.
-# TODO: Consider some special version format like this: 3.0a, 3.1b.
 cmp_tmux_version () {
-  cmp_versions "$(tmux_version)" "$1"
+  cmp_versions "$(normalized_tmux_version)" "$1"
 }
 
 is_current_tmux_version_eq_or_gt () {
