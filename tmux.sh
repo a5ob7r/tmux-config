@@ -405,7 +405,10 @@ if is_current_tmux_version_eq_or_gt '2.2'; then
   tmux set -g display-time 0
 fi
 tmux set -g history-limit 10000
-tmux set -g mouse on
+if is_current_tmux_version_eq_or_gt '2.1'; then
+  # Enabled since bf635e7741f7b881f67ec7e4a5caa02f7ff3d786
+  tmux set -g mouse on
+fi
 tmux set -g status-keys emacs
 
 if ! is_ssh_connection; then
