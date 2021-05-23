@@ -44,6 +44,7 @@ is_alphabet_char () {
 #   Joined string
 #######################################
 join_lines_with () {
+  # shellcheck disable=2207
   local -ra lines=( $(</dev/stdin) )
   local -r IFS="$1"
   echo "${lines[*]}"
@@ -149,7 +150,9 @@ version_to_lines () {
 #   Same to `cmp`
 #######################################
 cmp_versions() {
+  # shellcheck disable=2207
   local -ra versions_x=( $(echo "$1" | version_to_lines) )
+  # shellcheck disable=2207
   local -ra versions_y=( $(echo "$2" | version_to_lines) )
 
   local -r min_len="$(min "${#versions_x[*]}" "${#versions_y[*]}")"
