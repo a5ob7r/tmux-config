@@ -447,3 +447,5 @@ fi
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
 tmux run -b "$TPM_DIR/tpm"
 # }}}
+
+# vim: set foldmethod=marker :
