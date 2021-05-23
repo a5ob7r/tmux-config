@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 # Use pure bash functions as much as possible.
+#
+# TODO: Consider bash version to check whether or not specific features is
+# enabled.
 
 # Functions {{{
 has () {
