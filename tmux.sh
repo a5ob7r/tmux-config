@@ -323,10 +323,10 @@ tmux bind h select-pane -L
 tmux unbind l
 tmux bind l select-pane -R
 
-tmux bind -Troot M-J selectp -D
-tmux bind -Troot M-K selectp -U
-tmux bind -Troot M-H selectp -L
-tmux bind -Troot M-L selectp -R
+tmux bind -n M-J selectp -D
+tmux bind -n M-K selectp -U
+tmux bind -n M-H selectp -L
+tmux bind -n M-L selectp -R
 
 # Select pane using continuous Shift + JKHL typing.
 if is_current_tmux_version_eq_or_gt '2.2'; then
