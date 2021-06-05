@@ -3,6 +3,10 @@
 #
 # TODO: Consider bash version to check whether or not specific features is
 # enabled.
+#
+# Tested bash versions
+# - 5.1.8(1)-release (x86_64-pc-linux-gnu)
+# - 3.2.57(1)-release (x86_64-apple-darwin20)
 
 # Functions {{{
 has () {
