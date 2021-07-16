@@ -402,9 +402,7 @@ fi
 # login shell. It is need to load the configs only when root login shell. The
 # main configs are `export ENV=VAR` and starting daemons.
 tmux set -g default-command "$SHELL"
-if is_current_tmux_version_eq_or_gt '2.2'; then
-  tmux set -g display-time 0
-fi
+tmux set -g display-time 0
 tmux set -g history-limit 10000
 if is_current_tmux_version_eq_or_gt '2.1'; then
   # Enabled since bf635e7741f7b881f67ec7e4a5caa02f7ff3d786
