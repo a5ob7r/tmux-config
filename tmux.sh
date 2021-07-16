@@ -375,7 +375,9 @@ fi
 tmux set -s default-terminal 'screen-256color'
 
 tmux set -s escape-time 0
-tmux set -g history-file "$TMUX_DATA_HOME_PATH/tmux_history"
+if is_current_tmux_version_eq_or_gt '2.1'; then
+  tmux set -g history-file "$TMUX_DATA_HOME_PATH/tmux_history"
+fi
 
 # Enable extra terminal features.
 # - RGB/Tc: Direct(true or RGB) color.
