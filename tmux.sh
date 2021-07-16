@@ -407,6 +407,10 @@ tmux set -g history-limit 10000
 if is_current_tmux_version_eq_or_gt '2.1'; then
   # Enabled since bf635e7741f7b881f67ec7e4a5caa02f7ff3d786
   tmux set -g mouse on
+else
+  tmux set -g mouse-resize-pane on
+  tmux set -g mouse-select-pane on
+  tmux set -g mouse-select-window on
 fi
 tmux set -g status-keys emacs
 
@@ -419,6 +423,9 @@ tmux set -g update-environment 'SSH_AUTH_SOCK'
 # }}}
 
 # Window options {{{
+if ! is_current_tmux_version_eq_or_gt '2.1'; then
+  tmux set -g mode-mouse on
+fi
 tmux set -wg aggressive-resize on
 tmux set -wg mode-keys vi
 # }}}
