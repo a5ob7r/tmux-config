@@ -187,12 +187,21 @@ cmp_versions() {
 
 # Return current tmux version. This aim is to remove extra prefixes.
 tmux_version () {
+  # Use cache if exists it.
+  if [[ -n "$__TMUX_VERSION" ]]; then
+    echo "$__TMUX_VERSION"
+    return 0
+  fi
+
   local version
 
   version="$(tmux -V)"
   version="${version/tmux /}"
   # Maybe HEAD's version output contains extra `next-` prefix.
   version="${version/next-/}"
+
+  # Cache tmux version info to reduce overhead of invocation of tmux command.
+  __TMUX_VERSION="$version"
 
   echo "$version"
 }
