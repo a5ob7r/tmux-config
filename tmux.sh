@@ -339,6 +339,16 @@ tmux bind -n M-K selectp -U
 tmux bind -n M-H selectp -L
 tmux bind -n M-L selectp -R
 
+tmux bind -n M-% split-window -h -c "#{pane_current_path}"
+tmux bind -n 'M-"' split-window -v -c "#{pane_current_path}"
+tmux bind -n M-c new-window
+tmux bind -n M-j select-pane -D
+tmux bind -n M-k select-pane -U
+tmux bind -n M-h select-pane -L
+tmux bind -n M-l select-pane -R
+tmux bind -n M-z resize-pane -Z
+tmux bind -n 'M-[' copy-mode
+
 # Select pane using continuous Shift + JKHL typing.
 if is_current_tmux_version_eq_or_gt '2.2'; then
   tmux bind J 'selectp -D; switchc -T prefix'
