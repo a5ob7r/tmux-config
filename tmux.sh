@@ -289,8 +289,11 @@ if is_current_tmux_version_eq_or_gt '2.4'; then
   # }}}
 
   # Vi like operations {{{
+  tmux bind -T copy-mode-vi y send-keys -X copy-selection
+  tmux bind -T copy-mode-vi Y 'send-keys -X begin-selection; send-keys -X end-of-line; send-keys -X copy-selection'
   tmux bind -T copy-mode-vi v send-keys -X begin-selection
   tmux bind -T copy-mode-vi V send-keys -X select-line
+  tmux bind -T copy-mode-vi i send-keys -X cancel
   # }}}
 
   # One mouse scroll unit is one line {{{
