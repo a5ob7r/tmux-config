@@ -347,6 +347,10 @@ tmux bind -n M-k select-pane -U
 tmux bind -n M-h select-pane -L
 tmux bind -n M-l select-pane -R
 tmux bind -n M-z resize-pane -Z
+tmux bind -n M-J resize-pane -D
+tmux bind -n M-K resize-pane -U
+tmux bind -n M-H resize-pane -L
+tmux bind -n M-L resize-pane -R
 tmux bind -n 'M-[' copy-mode
 
 # Select pane using continuous Shift + JKHL typing.
