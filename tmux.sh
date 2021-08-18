@@ -268,7 +268,7 @@ readonly TMUX_LOCAL_CONFIG="$TMUX_DATA_HOME_PATH/tmux.local.conf"
 # }}}
 
 # Prefix key {{{
-readonly TMUX_PREFIX_KEY='C-q'
+readonly TMUX_PREFIX_KEY='M-q'
 tmux set -g prefix "$TMUX_PREFIX_KEY"
 
 # Send prefix key to tmux inside tmux by double typing prefix key.
