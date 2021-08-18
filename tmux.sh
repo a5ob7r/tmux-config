@@ -246,7 +246,7 @@ cmp_tmux_version () {
   cmp_versions "$(normalized_tmux_version)" "$1"
 }
 
-is_current_tmux_version_eq_or_gt () {
+is_at_least () {
   case "$(cmp_tmux_version "$1")" in
     EQ | GT )
       return 0
@@ -279,7 +279,7 @@ tmux unbind 'C-b'
 # }}}
 
 # Key bindings {{{
-if is_current_tmux_version_eq_or_gt '2.4'; then
+if is_at_least '2.4'; then
   # copy-selection without cancel {{{
   tmux bind -T copy-mode-vi Enter send-keys -X copy-selection
 
@@ -303,7 +303,7 @@ if is_current_tmux_version_eq_or_gt '2.4'; then
 fi
 
 # Reload config {{{
-if is_current_tmux_version_eq_or_gt '3.0'; then
+if is_at_least '3.0'; then
   tmux bind R "source ~/.config/tmux/tmux.conf; display 'tmux.conf is reloaded!'"
 else
   tmux bind R source ~/.tmux.conf\; display '.tmux.conf is reloaded!'
@@ -354,7 +354,7 @@ tmux bind -n M-L resize-pane -R
 tmux bind -n 'M-[' copy-mode
 
 # Select pane using continuous Shift + JKHL typing.
-if is_current_tmux_version_eq_or_gt '2.2'; then
+if is_at_least '2.2'; then
   tmux bind J 'selectp -D; switchc -T prefix'
   tmux bind K 'selectp -U; switchc -T prefix'
   tmux bind H 'selectp -L; switchc -T prefix'
@@ -363,7 +363,7 @@ fi
 # }}}
 
 # {{{ other
-if is_current_tmux_version_eq_or_gt '2.2'; then
+if is_at_least '2.2'; then
   tmux bind q display-panes -b -d 0
 
   # Jump to previous prompt of pure
@@ -387,7 +387,7 @@ tmux bind G splitw -h -c '#{pane_current_path}' tig
 # }}}
 
 # Server options {{{
-if is_current_tmux_version_eq_or_gt '2.4'; then
+if is_at_least '2.4'; then
   tmux set -sa command-alias e="split-window -c '#{pane_current_path}'"
   tmux set -sa command-alias reindex='move-window -r'
 fi
@@ -401,13 +401,13 @@ fi
 tmux set -s default-terminal 'screen-256color'
 
 tmux set -s escape-time 0
-if is_current_tmux_version_eq_or_gt '2.1'; then
+if is_at_least '2.1'; then
   tmux set -g history-file "$TMUX_DATA_HOME_PATH/tmux_history"
 fi
 
 # Enable extra terminal features.
 # - RGB/Tc: Direct(true or RGB) color.
-if is_current_tmux_version_eq_or_gt '3.2'; then
+if is_at_least '3.2'; then
   # It is added on c91b4b2e142b5b3fc9ca88afec6bfa9b2711e01b.
 
   # Matchs to st-256color, xterm-256colour, screen-256color and so on.
@@ -430,7 +430,7 @@ fi
 tmux set -g default-command "$SHELL"
 tmux set -g display-time 0
 tmux set -g history-limit 10000
-if is_current_tmux_version_eq_or_gt '2.1'; then
+if is_at_least '2.1'; then
   # Enabled since bf635e7741f7b881f67ec7e4a5caa02f7ff3d786
   tmux set -g mouse on
 else
@@ -449,7 +449,7 @@ tmux set -g update-environment 'SSH_AUTH_SOCK'
 # }}}
 
 # Window options {{{
-if ! is_current_tmux_version_eq_or_gt '2.1'; then
+if ! is_at_least '2.1'; then
   tmux set -g mode-mouse on
 fi
 tmux set -wg aggressive-resize on
@@ -457,7 +457,7 @@ tmux set -wg mode-keys vi
 # }}}
 
 # Others {{{
-if is_current_tmux_version_eq_or_gt '3.1'; then
+if is_at_least '3.1'; then
   tmux source -q "$TMUX_LOCAL_CONFIG"
 else
   [[ -f "$TMUX_LOCAL_CONFIG" ]] && tmux source "$TMUX_LOCAL_CONFIG"
